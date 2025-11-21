@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const counter = ref(0)
 </script>
 
 <template>
@@ -13,9 +14,10 @@
                 src="/images/cart.svg"
                 alt="Корзина"
                 class="header__cart-icon"
-                width=""
-                height=""
+                width="30"
+                height="30"
             >
+            <span class="header__counter">{{ counter }}</span>
         </NuxtLink>
     </header>
 </template>

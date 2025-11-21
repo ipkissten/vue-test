@@ -1,14 +1,43 @@
 .header {
+    --padding: 16px;
+
+    position: relative;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    padding: 10px;
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 10px var(--padding);
+
+    &::before {
+        content: '';
+
+        position: absolute;
+        inset: auto var(--padding) 0;
+
+        background-color: #333;
+
+        height: 1px;
+    }
 
     &__cart {
+        position: relative;
+
+        text-decoration: none;
+
         width: 50px;
         height: 50px;
-        padding: 10px;
+        padding: 12px;
+
+        transition: opacity 0.3s;
+
+        @media not all and (pointer: coarse) {
+            &:hover {
+                opacity: 0.7;
+            }
+        }
     }
 
     &__cart-icon {
@@ -16,5 +45,31 @@
         height: 100%;
 
         object-fit: contain;
+    }
+
+    &__counter {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 12px;
+        line-height: 1.2;
+        font-weight: 500;
+        color: #333;
+
+        border: 2px solid #333;
+        border-radius: 50%;
+
+        min-width: 18px;
+        height: 18px;
+        padding: 3px;
+    }
+
+    @media (min-width: 1024px) {
+        --padding: 32px;
     }
 }
