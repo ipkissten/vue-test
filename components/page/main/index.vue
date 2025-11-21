@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    1111выв
+    <CatalogCatalog />
 </template>

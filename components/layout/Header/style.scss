@@ -19,7 +19,7 @@
 
         background-color: #333;
 
-        height: 1px;
+        height: 2px;
     }
 
     &__cart {
@@ -58,8 +58,10 @@
 
         font-size: 12px;
         line-height: 1.2;
-        font-weight: 500;
+        font-weight: 700;
         color: #333;
+
+        background-color: #fff;
 
         border: 2px solid #333;
         border-radius: 50%;

@@ -1,9 +1,13 @@
 * {
+    font-family: 'Manrope';
+
     box-sizing: border-box;
 }
 
 html {
     height: 100%;
+
+    overflow: hidden;
 }
 
 body {
@@ -27,4 +31,14 @@ main {
     @media (min-width: 1024px) {
         padding: 10px 32px;
     }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
