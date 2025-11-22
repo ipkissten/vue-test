@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import type { Price } from '~/types'
 import { formatNumberLang } from '~/utils/helpers'
+import { useCartStore } from '~/store/cart'
 
 interface Props {
   title: string
   img: string
   brand: string
   price: Price
+  id: number
 }
 
 const { price } = defineProps<Props>()
+const cartStore = useCartStore()
 
 const currency = computed(() => {
   switch (price.currency) {
@@ -41,7 +44,9 @@ const currency = computed(() => {
     <span class="product-card__price">
       {{ currency }}{{ formatNumberLang(price.value) }}
     </span>
-    <UiButton>
+    <UiButton
+      @click="cartStore.addToCart(id)"
+    >
       Add to cart
     </UiButton>
   </div>

@@ -8,11 +8,11 @@ const tag = computed(() => {
 })
 
 const title = computed(() => {
-  return route.path === '/' ? null : 'Go to main page';
+  return route.path === '/' ? null : 'Go to main page'
 })
 
 const url = computed(() => {
-  return route.path === '/' ? null : '/';
+  return route.path === '/' ? null : '/'
 })
 </script>
 

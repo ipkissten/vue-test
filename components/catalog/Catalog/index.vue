@@ -10,14 +10,14 @@ const [
 ] = await Promise.all([
   useAsyncData(
     'products',
-    () => catalogStore.getProducts(selectedFilters.value),
+    () => catalogStore.fetchProducts(selectedFilters.value),
     {
       transform: response => response?.products
     }
   ),
   useAsyncData(
     'filters',
-    () => catalogStore.getFilters(),
+    () => catalogStore.fetchFilters(),
     {
       transform: response => response?.filters
     }
@@ -69,6 +69,7 @@ watch(selectedFilters, () => {
         :brand="item.brand.name"
         :price="item.regular_price"
         :img="item.image"
+        :id="item.id"
       />
     </div>
   </section>

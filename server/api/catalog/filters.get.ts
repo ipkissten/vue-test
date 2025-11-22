@@ -1,4 +1,4 @@
-import type { Response, Filter, DataFilters } from '@/types'
+import type { Response, Filter, DataFilters } from '~/types'
 
 const filters: Filter[] = [
   {

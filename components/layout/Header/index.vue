@@ -1,5 +1,12 @@
 <script setup lang="ts">
-const counter = ref(0)
+import { useCartStore } from '~/store/cart'
+
+const cartStore = useCartStore()
+
+await useAsyncData(
+  'cart',
+  () => cartStore.fetchCounter()
+)
 </script>
 
 <template>
@@ -17,11 +24,11 @@ const counter = ref(0)
         width="30"
         height="30"
       >
-      <span class="header__counter">{{ counter }}</span>
+      <span class="header__counter">{{ cartStore.getCounter }}</span>
     </NuxtLink>
   </header>
 </template>
 
 <style lang="scss" scoped>
-@use "./style.scss";
+@use "./style.scss"
 </style>
