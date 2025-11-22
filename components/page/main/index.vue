@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <CatalogCatalog />
+  <CatalogCatalog />
 </template>

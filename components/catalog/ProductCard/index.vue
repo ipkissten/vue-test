@@ -1,27 +1,34 @@
 <script setup lang="ts">
-defineOptions({
-  inheritAttrs: false
-})
+import type { Price } from '~/types'
+import { formatNumberLang } from '~/utils/helpers'
 
 interface Props {
   title: string
   img: string
   brand: string
-  price: number
+  price: Price
 }
 
-defineProps<Props>()
+const { price } = defineProps<Props>()
+
+const currency = computed(() => {
+  switch (price.currency) {
+    case 'USD':
+      return '$'
+    case 'EUR':
+      return '€'
+  }
+})
 </script>
 
 <template>
   <div class="product-card">
-    <NuxtPicture
+    <NuxtImg
       class="product-card__img"
       :src="img"
-      sizes="(max-width: 425px) 100px, 200px"
       width="200"
       height="200"
-      alt=""
+      :alt="title"
       format="webp"
       quality="80"
     />
@@ -32,10 +39,10 @@ defineProps<Props>()
       {{ brand }}
     </span>
     <span class="product-card__price">
-      ${{ price }}
+      {{ currency }}{{ formatNumberLang(price.value) }}
     </span>
     <UiButton>
-      Добавить в корзину
+      Add to cart
     </UiButton>
   </div>
 </template>

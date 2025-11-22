@@ -2,8 +2,8 @@
 </script>
 
 <template>
-    <LayoutHeader />
-    <main>
-        <slot />
-    </main>
+  <LayoutHeader />
+  <main>
+    <slot />
+  </main>
 </template>

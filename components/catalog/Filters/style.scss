@@ -1,92 +1,92 @@
 .filters {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
 
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  background-color: #fff;
+
+  padding: 16px;
+
+  &__title {
+    font-weight: 700;
+
+    margin: 0;
+  }
+
+  &__list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    align-items: flex-start;
+    gap: 8px;
 
-    background-color: #fff;
+    margin-bottom: auto;
 
-    padding: 16px;
+    overflow: hidden auto;
+  }
 
-    &__title {
-        font-weight: 700;
+  &__item {
+    position: relative;
 
-        margin: 0;
+    font-weight: 500;
+    font-size: 14px;
+
+    background-color: transparent;
+
+    border: 0;
+
+    padding: 4px 0;
+
+    cursor: pointer;
+
+    transition: opacity 0.3s;
+
+    &::before {
+      content: '';
+
+      position: absolute;
+      inset: auto -4px 0;
+
+      background-color: #333;
+
+      height: 2px;
+
+      opacity: 0;
+
+      transition: opacity 0.3s;
     }
 
-    &__list {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-
-        margin-bottom: auto;
-
-        overflow: hidden auto;
+    &--active {
+      &::before {
+        opacity: 1;
+      }
     }
 
-    &__item {
-        position: relative;
-
-        font-weight: 500;
-        font-size: 14px;
-
-        background-color: transparent;
-
-        border: 0;
-
-        padding: 4px 0;
-
-        cursor: pointer;
-
-        transition: opacity 0.3s;
-
+    @media not all and (pointer: coarse) {
+      &:hover {
         &::before {
-            content: '';
-
-            position: absolute;
-            inset: auto -4px 0;
-
-            background-color: #333;
-
-            height: 2px;
-
-            opacity: 0;
-
-            transition: opacity 0.3s;
+          opacity: 1;
         }
-
-        &--active {
-            &::before {
-                opacity: 1;
-            }
-        }
-
-        @media not all and (pointer: coarse) {
-            &:hover {
-                &::before {
-                    opacity: 1;
-                }
-            }
-        }
+      }
     }
+  }
 
-    @media (min-width: 768px) {
-        position: sticky;
-        top: 16px;
+  @media (min-width: 768px) {
+    position: sticky;
+    top: 16px;
 
-        grid-row: 1/-1;
+    grid-row: 1/-1;
 
-        border-right: 2px solid #333;
+    border-right: 2px solid #333;
 
-        height: fit-content;
-        padding: 6px 40px 0 0;
-    }
+    height: fit-content;
+    padding: 6px 40px 0 0;
+  }
 
-    @media (min-width: 1024px) {
-        padding-right: 60px;
-    }
+  @media (min-width: 1024px) {
+    padding-right: 60px;
+  }
 }
