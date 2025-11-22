@@ -1,0 +1,21 @@
+:deep(.product-card__title) {
+  font-size: 18px;
+
+  margin: 0;
+}
+
+:deep(.product-card__brand) {
+  font-size: 14px;
+}
+
+:deep(.product-card__price) {
+  font-size: 14px;
+}
+
+:deep(.product-card__img) {
+  border: 2px solid #333;
+
+  width: 100%;
+
+  object-fit: contain;
+}

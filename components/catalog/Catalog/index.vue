@@ -60,9 +60,11 @@ watch(selectedFilters, () => {
     >
       Show filters
     </UiButton>
-    <div class="catalog__grid">
-      <CatalogProductCard
-        v-if="products && products.length"
+    <div
+      v-if="products && products.length"
+      class="catalog__grid"
+    >
+      <CardsCatalog
         v-for="item in products"
         :key="item.id"
         :title="item.title"

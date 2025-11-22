@@ -1,4 +1,4 @@
-import type { DataCounter, CartState } from '~/types'
+import type { DataCounter, CartState, DataProducts } from '~/types'
 import { objectToFormData } from '~/utils/helpers'
 
 export default function (state: CartState) {
@@ -23,8 +23,11 @@ export default function (state: CartState) {
     }
   }
 
+  const fetchList = async () => await $fetchData<DataProducts>('/api/cart/list', { method: 'GET' })
+
   return {
     fetchCounter,
-    addToCart
+    addToCart,
+    fetchList
   }
 }

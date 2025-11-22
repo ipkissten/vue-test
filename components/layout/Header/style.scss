@@ -8,6 +8,7 @@
   align-items: center;
 
   max-width: 1264px;
+  height: 70px;
   margin: 0 auto;
   padding: 10px var(--padding);
 
@@ -69,6 +70,10 @@
     min-width: 18px;
     height: 18px;
     padding: 3px;
+  }
+
+  &--cart {
+    justify-content: center;
   }
 
   @media (min-width: 1024px) {

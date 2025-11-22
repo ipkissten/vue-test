@@ -2,17 +2,21 @@
 import { useCartStore } from '~/store/cart'
 
 const cartStore = useCartStore()
+const route = useRoute()
 
 await useAsyncData(
-  'cart',
+  'cart-counter',
   () => cartStore.fetchCounter()
 )
+
+const isCartPage = computed(() => route.path === '/cart')
 </script>
 
 <template>
-  <header class="header">
+  <header :class="['header', { 'header--cart': isCartPage }]">
     <UiLogo />
     <NuxtLink
+      v-if="!isCartPage"
       to="/cart"
       class="header__cart"
       title="To cart"

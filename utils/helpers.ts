@@ -1,3 +1,5 @@
+import type { Сurrency } from '~/types'
+
 export const formatNumberLang = (num: number, lang = 'en-US') => {
   return new Intl.NumberFormat(lang, {
     minimumFractionDigits: 2,
@@ -22,4 +24,17 @@ export function objectToFormData(obj: Record<string, any>): FormData {
     })
 
     return formData
+}
+
+export function returnCurrencySymbol(currency: Сurrency) {
+  switch (currency) {
+    case 'USD':
+      return '$'
+    case 'EUR':
+      return '€'
+
+    default:
+      const exhaustive: never = currency
+      return exhaustive
+  }
 }

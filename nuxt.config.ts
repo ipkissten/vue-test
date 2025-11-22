@@ -3,7 +3,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
-  ssr: true,
+  ssr: false,
   app: {
     head: {
       title: 'Vue Test',
