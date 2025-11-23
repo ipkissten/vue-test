@@ -33,6 +33,13 @@
 
   &__head {
     font-weight: 700;
+    text-align: center;
+
+    &:nth-child(1 of .cart__head) {
+      justify-self: flex-start;
+
+      min-width: 150px;
+    }
   }
 
   &__total {
@@ -40,5 +47,16 @@
     font-size: 24px;
 
     margin-left: auto;
+  }
+
+  &__empty {
+    align-self: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    &__list {
+      display: grid;
+      grid-template-columns: 60px 1fr 60px 110px 60px 30px;
+    }
   }
 }

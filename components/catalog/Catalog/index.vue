@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { useCatalogStore } from '~/store/catalog'
+import { useCartStore } from '~/store/cart'
 
 const catalogStore = useCatalogStore()
+const cartStore = useCartStore()
 const selectedFilters = ref<number[]>([])
 
 const [
-  { data: products, refresh },
+  { refresh },
   { data: filters }
 ] = await Promise.all([
   useAsyncData(
     'products',
-    () => catalogStore.fetchProducts(selectedFilters.value),
-    {
-      transform: response => response?.products
-    }
+    () => catalogStore.fetchProducts(selectedFilters.value)
   ),
   useAsyncData(
     'filters',
@@ -38,6 +37,10 @@ watch(selectedFilters, () => {
 }, {
   deep: true
 })
+
+const getCounter = (id: number) => {
+  return cartStore.getProducts.value.find(product => product.id === id)?.counter || 0
+}
 </script>
 
 <template>
@@ -61,17 +64,18 @@ watch(selectedFilters, () => {
       Show filters
     </UiButton>
     <div
-      v-if="products && products.length"
+      v-if="catalogStore.getProducts.value && catalogStore.getProducts.value.length"
       class="catalog__grid"
     >
       <CardsCatalog
-        v-for="item in products"
+        v-for="item in catalogStore.getProducts.value"
         :key="item.id"
         :title="item.title"
         :brand="item.brand.name"
         :price="item.regular_price"
         :img="item.image"
         :id="item.id"
+        :counter="getCounter(item.id)"
       />
     </div>
   </section>

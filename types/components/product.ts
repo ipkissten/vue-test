@@ -6,4 +6,5 @@ export interface ProductProps {
   brand: string
   price: Price
   id: number
+  counter: number
 }

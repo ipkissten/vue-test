@@ -1,6 +1,8 @@
-import type { Product, CartItem } from '~/types'
+import type { Product, CartProduct, ProductWithCounter, Response, DataCart, TotalDataCart } from '~/types'
+import { readMultipartFormData } from 'h3'
+import type { H3Event, EventHandlerRequest } from 'h3'
 
-export const cartProducts: CartItem[] = []
+export let cartProducts: CartProduct[] = []
 
 export const products: Product[] = [
   {
@@ -140,4 +142,56 @@ export const products: Product[] = [
   }
 ]
 
-export const calculateTotalCounter = () => cartProducts.reduce((total, product) => total + product.counter, 0)
+export const setCartProducts = (products: CartProduct[]) => cartProducts = products
+
+export const calculateTotalCounter = () => {
+  return cartProducts.reduce((total, product) => total + product.counter, 0)
+}
+
+export const calculateTotalPrice = () => {
+  return cartProducts.reduce((total, product) => {
+    const item = products.find(item => item.id === product.id)
+
+    if (item) {
+      total += item.regular_price.value * product.counter
+    }
+    return total
+  }, 0)
+}
+
+export const getProductsInCart = () => {
+  return cartProducts.reduce<ProductWithCounter[]>((acc, product) => {
+    const item = products.find(item => item.id === product.id)
+
+    if (item) {
+      acc.push({
+        ...product,
+        ...item
+      })
+    }
+
+    return acc
+  }, [])
+}
+
+export const findProduct = async (event: H3Event<EventHandlerRequest>) => {
+  const body = await readMultipartFormData(event)
+  const idField = body?.find(f => f.name === 'id')
+  const productId = idField ? Number(idField.data) : undefined
+  const product = products.find(item => item.id === productId)
+
+  return product
+}
+
+export const changeCounterProductInCart = async (event: H3Event<EventHandlerRequest>) => {
+  const body = await readMultipartFormData(event)
+  const idField = body?.find(f => f.name === 'id')
+  const counterField = body?.find(f => f.name === 'counter')
+  const productCounter = counterField ? Number(counterField.data) : undefined
+  const productId = idField ? Number(idField.data) : undefined
+  const product = cartProducts.find(item => item.id === productId)
+
+  if (product && productCounter) {
+    product.counter = productCounter
+  }
+}

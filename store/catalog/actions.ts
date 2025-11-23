@@ -1,6 +1,6 @@
 import type { DataProducts, DataFilters } from '~/types'
 
-export default function () {
+export default function (state: KeysToRef<DataProducts>) {
   const { $fetchData } = useNuxtApp()
 
   const fetchProducts = async (brands?: number[]) => {
@@ -10,7 +10,13 @@ export default function () {
       stringBrands += `&b=${brand}`
     })
 
-    return await $fetchData<DataProducts>(`/api/catalog/products${stringBrands}`, { method: 'GET' })
+    const response = await $fetchData<DataProducts>(`/api/catalog/products${stringBrands}`, { method: 'GET' })
+
+    if (response) {
+      state.products.value = response.products
+    }
+
+    return null
   }
 
   const fetchFilters = async () => await $fetchData<DataFilters>('/api/catalog/filters', { method: 'GET' })

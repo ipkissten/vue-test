@@ -9,8 +9,12 @@ const selectedFilters = defineModel<number[]>({
   default: () => []
 })
 
-const showBrand = (id: number) => {
-  selectedFilters.value.push(id)
+const toggleBrand = (id: number) => {
+  if (selectedFilters.value.includes(id)) {
+    selectedFilters.value = selectedFilters.value.filter(item => item !== id)
+  } else {
+    selectedFilters.value.push(id)
+  }
 }
 
 const resetFilters = () => {
@@ -26,7 +30,7 @@ const resetFilters = () => {
         v-for="filter in filters"
         :key="filter.id"
         :class="['filters__item', {'filters__item--active': selectedFilters.includes(filter.id)}]"
-        @click="showBrand(filter.id)"
+        @click="toggleBrand(filter.id)"
       >
         {{ filter.title }}
       </button>

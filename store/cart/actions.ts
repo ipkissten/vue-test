@@ -1,33 +1,85 @@
-import type { DataCounter, CartState, DataProducts } from '~/types'
+import type { DataCart, TotalDataCart } from '~/types'
 import { objectToFormData } from '~/utils/helpers'
 
-export default function (state: CartState) {
+export default function (state: KeysToRef<DataCart & Total>) {
   const { $fetchData } = useNuxtApp()
 
-  const fetchCounter = async () => {
-    const response = await $fetchData<DataCounter>('/api/cart/counter', { method: 'GET' })
+  const fetchState = async () => {
+    const response = await $fetchData<DataCart>('/api/cart/state', { method: 'GET' })
 
     if (response) {
       state.counter.value = response.counter
+      state.products.value = response.products
     }
+
+    return null
   }
 
   const addToCart = async (productId: number) => {
-    const response = await $fetchData<DataCounter>('/api/cart/add', {
+    const response = await $fetchData<DataCart>('/api/cart/product', {
       method: 'POST',
       body: objectToFormData({ id: productId })
     })
 
     if (response) {
+      state.products.value = response.products
       state.counter.value = response.counter
+
+      return true
     }
   }
 
-  const fetchList = async () => await $fetchData<DataProducts>('/api/cart/list', { method: 'GET' })
+  const removeFromCart = async (productId: number) => {
+    const response = await $fetchData<DataCart>('/api/cart/product', {
+      method: 'DELETE',
+      body: objectToFormData({ id: productId })
+    })
+
+    if (response) {
+      state.products.value = response.products
+      state.counter.value = response.counter
+
+      return true
+    }
+  }
+
+  const updateProductCounter = async (productId: number, counter: number) => {
+    if (counter <= 0) {
+      return removeFromCart(productId)
+    }
+
+    const response = await $fetchData<DataCart>('/api/cart/product', {
+      method: 'PUT',
+      body: objectToFormData({
+        id: productId,
+        counter
+      })
+    })
+
+    if (response) {
+      state.products.value = response.products
+      state.counter.value = response.counter
+
+      return true
+    }
+  }
+
+  const fetchCart = async () => {
+    const response = await $fetchData<TotalDataCart>('/api/cart/summary', { method: 'GET' })
+
+    if (response) {
+      state.counter.value = response.counter
+      state.total.value = response.total
+    }
+
+    return response
+  }
 
   return {
-    fetchCounter,
+    fetchState,
     addToCart,
-    fetchList
+    removeFromCart,
+    updateProductCounter,
+    fetchCart
   }
 }

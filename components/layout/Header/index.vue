@@ -6,7 +6,7 @@ const route = useRoute()
 
 await useAsyncData(
   'cart-counter',
-  () => cartStore.fetchCounter()
+  () => cartStore.fetchState()
 )
 
 const isCartPage = computed(() => route.path === '/cart')

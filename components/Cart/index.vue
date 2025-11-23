@@ -3,16 +3,18 @@ import { useCartStore } from '~/store/cart'
 import { returnCurrencySymbol, formatNumberLang } from '~/utils/helpers'
 
 const cartStore = useCartStore()
-const total = 111
 const listHeads = ['Item', 'Price', 'Qty', 'Total']
 
-const { data: products } = await useAsyncData(
+const { data: products, refresh } = await useAsyncData(
   'cart',
-  () => cartStore.fetchList(),
+  () => cartStore.fetchCart(),
   {
     transform: response => response?.products
   }
 )
+
+watch(cartStore.getCounter, () => refresh())
+
 </script>
 
 <template>
@@ -40,10 +42,11 @@ const { data: products } = await useAsyncData(
           :price="item.regular_price"
           :img="item.image"
           :id="item.id"
+          :counter="item.counter"
         />
       </div>
       <div class="cart__total">
-        Subtotal: {{ returnCurrencySymbol('USD') }}{{ formatNumberLang(total) }}
+        Subtotal: {{ returnCurrencySymbol('USD') }}{{ formatNumberLang( cartStore.getTotal.value) }}
       </div>
       <UiButton>
         Checkout

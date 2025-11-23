@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
   id: number
+  classMod?: string
 }
 
 defineProps<Props>()
@@ -19,20 +20,18 @@ const decrement = () => {
 </script>
 
 <template>
-  <div class="counter">
+  <div :class="['counter', classMod]">
     <button
       class="counter__btn"
       @click="decrement"
     >
       -
     </button>
-    <input
-      :id="id.toString()"
-      name="counter"
+    <span
       class="counter__value"
-      v-model="value"
-      type="text"
     >
+    {{ value }}
+    </span>
     <button
       class="counter__btn"
       @click="increment"

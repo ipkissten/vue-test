@@ -5,8 +5,8 @@ import useActions from './actions'
 
 export const useCatalogStore = defineStore('Catalog', () => {
   const state = useState()
-  const getters = useGetters()
-  const actions = useActions()
+  const getters = useGetters(state)
+  const actions = useActions(state)
 
   return {
     ...state,

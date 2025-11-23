@@ -2,5 +2,5 @@
 </script>
 
 <template>
-  <CartCart />
+  <Cart />
 </template>
