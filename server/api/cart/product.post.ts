@@ -5,10 +5,17 @@ export default defineEventHandler(async (event) => {
   const product = await findProduct(event)
 
   if (product) {
-    cartProducts.push({
-      id: product.id,
-      counter: 1
-    })
+    if ('id' in product) {
+      cartProducts.push({
+        id: product.id,
+        counter: 1
+      })
+    } else {
+      cartProducts.push({
+        id: product.product.id,
+        counter: 1
+      })
+    }
   }
 
   const response: Response<DataCart> = {

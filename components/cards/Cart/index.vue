@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ProductProps } from '~/types/components/product'
+import type { Product } from '~/types/catalog'
 
-const props = defineProps<ProductProps>()
+const props = defineProps<Product>()
 </script>
 
 <template>

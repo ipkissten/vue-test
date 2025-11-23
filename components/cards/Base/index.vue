@@ -1,50 +1,63 @@
 <script setup lang="ts">
-import type { ProductProps } from '~/types/components/product'
+import type { Product } from '~/types/catalog'
+import { ProductTypes } from '~/types'
 import { returnCurrencySymbol, formatNumberLang } from '~/utils/helpers'
 import { useCartStore } from '~/store/cart'
 
-const cartStore = useCartStore()
-
-const props = defineProps<ProductProps>()
-const counter = ref(props.counter)
-const DEBOUNCE_DELAY = 500
-let timeoutId: ReturnType<typeof setTimeout> | null = null
-let skip = false
-
-const setCounter = (val: number) => {
-  counter.value = val
+interface Props extends Product {
+  currentVariantId?: number
 }
 
-watch(counter, async (newValue, prevValue) => {
-  if (newValue === 1 && prevValue === 0 || newValue === prevValue) {
-    return
-  }
+const cartStore = useCartStore()
+const props = defineProps<Props>()
 
-  if (skip) {
-    skip = false
-    return
-  }
+// const getCounter = computed(() => {
+//   if (props.type === ProductTypes.SIMPLE) {
+//     return cartStore.getProducts.value.find(product => product.id === props.id)?.counter || 0
+//   } else {
+//     return cartStore.getProducts.value.find(product => product.id === props.currentVariantId)?.counter || 0
+//   }
+// })
 
-  if (timeoutId) {
-    clearTimeout(timeoutId)
-  }
+// const counter = ref(getCounter.value)
+// const DEBOUNCE_DELAY = 500
+// let timeoutId: ReturnType<typeof setTimeout> | null = null
+// let skip = false
 
-  timeoutId = setTimeout(async () => {
-    const success = await cartStore.updateProductCounter(
-      props.id,
-      newValue
-    )
+// const setCounter = (val: number) => {
+//   counter.value = val
+// }
 
-    if (!success) {
-      skip = true
-      setCounter(props.counter)
-    }
-  }, DEBOUNCE_DELAY)
-})
+// watch(counter, async (newValue, prevValue) => {
+//   if (newValue === 1 && prevValue === 0 || newValue === prevValue) {
+//     return
+//   }
 
-watch(() => props.counter, (newValue) => {
-  setCounter(newValue)
-})
+//   if (skip) {
+//     skip = false
+//     return
+//   }
+
+//   if (timeoutId) {
+//     clearTimeout(timeoutId)
+//   }
+
+//   timeoutId = setTimeout(async () => {
+//     const success = await cartStore.updateProductCounter(
+//       props.currentVariantId || props.id,
+//       newValue
+//     )
+
+//     if (!success) {
+//       skip = true
+//       setCounter(getCounter.value)
+//     }
+//   }, DEBOUNCE_DELAY)
+// })
+
+// watch(getCounter, (newValue) => {
+//   setCounter(newValue)
+// })
 </script>
 
 <template>
@@ -53,8 +66,6 @@ watch(() => props.counter, (newValue) => {
       :returnCurrencySymbol="returnCurrencySymbol"
       :formatNumberLang="formatNumberLang"
       :cartStore="cartStore"
-      :counter="counter"
-      :setCounter="setCounter"
     />
   </div>
 </template>

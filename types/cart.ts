@@ -10,7 +10,7 @@ export interface DataCart {
   counter: number
 }
 
-export interface ProductWithCounter extends Product {
+export type ProductWithCounter = Product & {
   counter: number
 }
 

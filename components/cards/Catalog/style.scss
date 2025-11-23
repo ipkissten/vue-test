@@ -25,4 +25,64 @@
 
     object-fit: contain;
   }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    margin-bottom: 4px;
+  }
+
+  &__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+
+    background-color: var(--background);
+
+    border: 2px solid #333;
+
+    width: 50px;
+    height: 20px;
+    padding: 2px;
+
+    cursor: pointer;
+
+    transition-property: opacity, border-color;
+    transition-duration: 0.3s;
+
+    @media not all and (pointer: coarse) {
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    &--active {
+      border-color: orange;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+  }
+
+  &:has(:not(.product-card__options)) {
+    .product-card {
+      &__price {
+        margin-bottom: auto;
+      }
+    }
+  }
 }
