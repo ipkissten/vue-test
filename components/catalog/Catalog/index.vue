@@ -59,11 +59,11 @@ watch(selectedFilters, () => {
       Show filters
     </UiButton>
     <div
-      v-if="catalogStore.getProducts.value && catalogStore.getProducts.value.length"
+      v-if="catalogStore.getProducts && catalogStore.getProducts.length"
       class="catalog__grid"
     >
       <CardsCatalog
-        v-for="item in catalogStore.getProducts.value"
+        v-for="item in catalogStore.getProducts"
         v-bind="item"
         :key="item.id"
       />

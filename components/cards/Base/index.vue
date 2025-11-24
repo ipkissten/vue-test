@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PropsBaseProduct } from '~/types/catalog'
+import { ProductTypes } from '~/types'
 import { returnCurrencySymbol, formatNumberLang } from '~/utils/helpers'
 import { useCartStore } from '~/store/cart'
 
@@ -8,14 +9,14 @@ const props = defineProps<PropsBaseProduct>()
 
 const getCounter = computed(() => {
   if (props.type === ProductTypes.SIMPLE || props.inCart) {
-    return cartStore.getProducts.value.find(product => product.id === props.id)?.counter || 0
+    return cartStore.getProducts.find(product => product.id === props.id)?.counter || 0
   } else {
-    return cartStore.getProducts.value.find(product => product.id === props.currentVariantDetailsId)?.counter || 0
+    return cartStore.getProducts.find(product => product.id === props.currentVariantDetailsId)?.counter || 0
   }
 })
 
 const counter = ref(getCounter.value)
-const DEBOUNCE_DELAY = 500
+const DEBOUNCE_DELAY = 200
 let timeoutId: ReturnType<typeof setTimeout> | null = null
 
 const setCounter = (val: number) => {

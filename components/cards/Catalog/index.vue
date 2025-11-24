@@ -88,7 +88,7 @@ watch(selectedOptions, (newOptions) => {
 onMounted(() => {
   if (props.type !== ProductTypes.CONFIGURABLE) return
 
-  const itemInCart = cartStore.getProducts.value
+  const itemInCart = cartStore.getProducts
     .find(p => props.variantMatrix?.some(v => v.id === p.id))
 
   if (!itemInCart) return

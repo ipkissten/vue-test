@@ -496,13 +496,29 @@ export const findProduct = async (event: H3Event<EventHandlerRequest>) => {
   return foundVariant || foundProduct
 }
 
+export const deleteProduct = async (productId: number) => {
+  setCartProducts(cartProducts.filter(item => item.id !== productId))
+}
+
+export const removeProduct = async (event: H3Event<EventHandlerRequest>) => {
+  const productId = await getKey(event, 'id')
+
+  if (productId) {
+    deleteProduct(productId)
+  }
+}
+
 export const changeCounterProductInCart = async (event: H3Event<EventHandlerRequest>) => {
   const productCounter = await getKey(event, 'counter')
   const productId = await getKey(event, 'id')
 
   const product = cartProducts.find(item => item.id === productId)
 
-  if (product && productCounter) {
-    product.counter = productCounter
+  if (product) {
+    if (productCounter === 0 && productId) {
+      deleteProduct(productId)
+    } else if (productCounter) {
+      product.counter = productCounter
+    }
   }
 }

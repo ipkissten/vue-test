@@ -3,7 +3,7 @@ import type { DataFilters } from '~/types/catalog'
 
 defineProps<DataFilters>()
 
-const emit = defineEmits(['close', ''])
+const emit = defineEmits(['close'])
 const selectedFilters = defineModel<number[]>({
   type: Array,
   default: () => []

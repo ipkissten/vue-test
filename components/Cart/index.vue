@@ -13,7 +13,7 @@ const { data: products, refresh } = await useAsyncData(
   }
 )
 
-watch(cartStore.getCounter, () => refresh())
+watch(() => cartStore.getCounter, () => refresh())
 
 </script>
 
@@ -41,7 +41,7 @@ watch(cartStore.getCounter, () => refresh())
         />
       </div>
       <div class="cart__total">
-        Subtotal: {{ returnCurrencySymbol('USD') }}{{ formatNumberLang( cartStore.getTotal.value) }}
+        Subtotal: {{ returnCurrencySymbol('USD') }}{{ formatNumberLang( cartStore.getTotal) }}
       </div>
       <UiButton>
         Checkout
