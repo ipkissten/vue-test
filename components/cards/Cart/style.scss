@@ -59,14 +59,10 @@
   }
 
   &__name {
-    grid-column: 2/3;
-    grid-row: 1/2;
-    align-self: flex-start;
-
     font-size: 16px;
 
     margin: 0;
-    padding-top: 4px;
+    padding-top: 2px;
   }
 
   &__wrap {
@@ -78,6 +74,19 @@
 
   &__mob-subtitle {
     font-weight: 700;
+  }
+
+  &__info-wrap {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__option {
+    font-size: 12px;
+    line-height: 1.2;
+    text-transform: capitalize;
   }
 
   @media (min-width: 768px) {
@@ -95,10 +104,12 @@
       display: contents;
     }
 
-    &__name {
+    &__info-wrap {
       justify-self: flex-start;
       align-self: center;
+    }
 
+    &__name {
       padding: 0;
     }
   }

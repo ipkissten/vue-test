@@ -1,19 +1,22 @@
 import type { Response, DataCart } from '~/types'
+import { ProductTypes } from '~/types'
 import { cartProducts, findProduct } from '~/server/utils/store'
 
 export default defineEventHandler(async (event) => {
   const product = await findProduct(event)
 
   if (product) {
-    if ('id' in product) {
+    if (product.type === ProductTypes.SIMPLE) {
       cartProducts.push({
         id: product.id,
-        counter: 1
+        counter: 1,
+        type: product.type
       })
-    } else {
+    } else if (product.type === ProductTypes.CONFIGURABLE) {
       cartProducts.push({
         id: product.product.id,
-        counter: 1
+        counter: 1,
+        type: product.type
       })
     }
   }

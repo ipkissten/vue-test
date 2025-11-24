@@ -1,63 +1,47 @@
 <script setup lang="ts">
-import type { Product } from '~/types/catalog'
-import { ProductTypes } from '~/types'
+import type { PropsBaseProduct } from '~/types/catalog'
 import { returnCurrencySymbol, formatNumberLang } from '~/utils/helpers'
 import { useCartStore } from '~/store/cart'
 
-interface Props extends Product {
-  currentVariantId?: number
+const cartStore = useCartStore()
+const props = defineProps<PropsBaseProduct>()
+
+const getCounter = computed(() => {
+  if (props.type === ProductTypes.SIMPLE || props.inCart) {
+    return cartStore.getProducts.value.find(product => product.id === props.id)?.counter || 0
+  } else {
+    return cartStore.getProducts.value.find(product => product.id === props.currentVariantDetailsId)?.counter || 0
+  }
+})
+
+const counter = ref(getCounter.value)
+const DEBOUNCE_DELAY = 500
+let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+const setCounter = (val: number) => {
+  counter.value = val
 }
 
-const cartStore = useCartStore()
-const props = defineProps<Props>()
+const onCounterUpdate = async () => {
+  if (timeoutId) {
+    clearTimeout(timeoutId)
+  }
 
-// const getCounter = computed(() => {
-//   if (props.type === ProductTypes.SIMPLE) {
-//     return cartStore.getProducts.value.find(product => product.id === props.id)?.counter || 0
-//   } else {
-//     return cartStore.getProducts.value.find(product => product.id === props.currentVariantId)?.counter || 0
-//   }
-// })
+  timeoutId = setTimeout(async () => {
+    const success = await cartStore.updateProductCounter(
+      props.currentVariantDetailsId || props.id,
+      counter.value
+    )
 
-// const counter = ref(getCounter.value)
-// const DEBOUNCE_DELAY = 500
-// let timeoutId: ReturnType<typeof setTimeout> | null = null
-// let skip = false
+    if (!success) {
+      setCounter(getCounter.value)
+    }
+  }, DEBOUNCE_DELAY)
+}
 
-// const setCounter = (val: number) => {
-//   counter.value = val
-// }
-
-// watch(counter, async (newValue, prevValue) => {
-//   if (newValue === 1 && prevValue === 0 || newValue === prevValue) {
-//     return
-//   }
-
-//   if (skip) {
-//     skip = false
-//     return
-//   }
-
-//   if (timeoutId) {
-//     clearTimeout(timeoutId)
-//   }
-
-//   timeoutId = setTimeout(async () => {
-//     const success = await cartStore.updateProductCounter(
-//       props.currentVariantId || props.id,
-//       newValue
-//     )
-
-//     if (!success) {
-//       skip = true
-//       setCounter(getCounter.value)
-//     }
-//   }, DEBOUNCE_DELAY)
-// })
-
-// watch(getCounter, (newValue) => {
-//   setCounter(newValue)
-// })
+watch(getCounter, (newValue) => {
+  setCounter(newValue)
+})
 </script>
 
 <template>
@@ -65,7 +49,10 @@ const props = defineProps<Props>()
     <slot
       :returnCurrencySymbol="returnCurrencySymbol"
       :formatNumberLang="formatNumberLang"
+      :counter="counter"
+      :onCounterUpdate="onCounterUpdate"
       :cartStore="cartStore"
+      :setCounter="setCounter"
     />
   </div>
 </template>

@@ -1,11 +1,11 @@
-import type { CartProduct, ProductWithCounter, OriginalProduct, VariantMatrixItem, Product, OptionGroup } from '~/types'
+import type { CartProduct, ProductInCartResponse, OriginalProduct, SimpleProduct, ConfigurableProduct, VariantMatrixItem, Product, OptionGroup, Variant } from '~/types'
 import { ProductTypes } from '~/types'
 import { readMultipartFormData } from 'h3'
 import type { H3Event, EventHandlerRequest } from 'h3'
 
 export let cartProducts: CartProduct[] = []
 
-export const products: OriginalProduct[] = [
+export const products: (Array<SimpleProduct | ConfigurableProduct>) = [
   {
     "type": ProductTypes.SIMPLE,
     "id": 1,
@@ -320,7 +320,7 @@ export function transformProduct(originalProduct: OriginalProduct): Product {
       id: originalProduct.id,
       title: originalProduct.title,
       price: originalProduct.regular_price,
-      brand: originalProduct.brand.name,
+      brand: originalProduct.brand,
       type: originalProduct.type,
       img: originalProduct.image,
     }
@@ -354,7 +354,7 @@ export function transformProduct(originalProduct: OriginalProduct): Product {
     id: originalProduct.id,
     title: originalProduct.title,
     price: originalProduct.regular_price,
-    brand: originalProduct.brand.name,
+    brand: originalProduct.brand,
     type: originalProduct.type,
     img: originalProduct.image,
     optionsGroups: optionsGroups,
@@ -373,52 +373,119 @@ export const calculateTotalCounter = () => {
 }
 
 export const calculateTotalPrice = () => {
-  return cartProducts.reduce((total, product) => {
-    const item = products.find(item => item.id === product.id)
+  return cartProducts.reduce((total, cartItem) => {
+    const baseProduct = products.find(p => {
+      if (p.type === ProductTypes.SIMPLE) {
+        return p.id === cartItem.id
+      }
 
-    if (item) {
-      total += item.regular_price.value * product.counter
+      if (p.type === ProductTypes.CONFIGURABLE) {
+        return p.variants.some(v => v.product.id === cartItem.id)
+      }
+
+      return false
+    })
+
+    if (!baseProduct) {
+      return total
     }
+
+    total += baseProduct.regular_price.value * cartItem.counter
     return total
   }, 0)
 }
 
 export const getProductsInCart = () => {
-  return cartProducts.reduce<ProductWithCounter[]>((acc, product) => {
-    const item = products.find(item => item.id === product.id)
+  return cartProducts.reduce<ProductInCartResponse[]>((acc, productInCart) => {
+    const baseProduct = products.find(p => {
+      if (p.type === ProductTypes.SIMPLE) {
+        return p.id === productInCart.id
+      }
 
-    if (item) {
+      if (p.type === ProductTypes.CONFIGURABLE) {
+        return p.variants.some(v => v.product.id === productInCart.id)
+      }
+
+      return false
+    })
+
+    if (!baseProduct) return acc
+
+    if (baseProduct.type === ProductTypes.SIMPLE) {
       acc.push({
-        ...product,
-        ...item
+        type: baseProduct.type,
+        id: baseProduct.id,
+        title: baseProduct.title,
+        img: baseProduct.image,
+        price: baseProduct.regular_price,
+        brand: baseProduct.brand,
+        counter: productInCart.counter
       })
+
+      return acc
     }
+
+    const variant = baseProduct.variants.find(
+      v => v.product.id === productInCart.id
+    )
+
+    if (!variant) return acc
+
+    const options = variant.attributes.map(attr => {
+      const option = baseProduct.configurable_options.find(
+        o => o.attribute_code === attr.code
+      )
+
+      const value = option?.values.find(v => v.value_index === attr.value_index)
+
+      return {
+        code: attr.code,
+        value_index: attr.value_index,
+        label: value?.label ?? ''
+      }
+    })
+
+    acc.push({
+      type: ProductTypes.CONFIGURABLE,
+      id: variant.product.id,
+      title: baseProduct.title,
+      img: variant.product.image,
+      price: baseProduct.regular_price,
+      brand: baseProduct.brand,
+      options,
+      counter: productInCart.counter
+    })
 
     return acc
   }, [])
 }
 
-export const findProduct = async (event: H3Event<EventHandlerRequest>) => {
+export const getKey = async (event: H3Event<EventHandlerRequest>, key: string) => {
   const body = await readMultipartFormData(event)
-  const idField = body?.find(f => f.name === 'id')
-  const productId = idField ? Number(idField.data) : undefined
+  const field = body?.find(f => f.name === key)
+  const foundField = field ? Number(field.data) : undefined
 
-  if (!productId) {
+  if (!foundField) {
     return undefined
   }
 
+  return foundField
+}
+
+export const findProduct = async (event: H3Event<EventHandlerRequest>) => {
+  const productId = await getKey(event, 'id')
   let foundVariant: Variant | undefined = undefined
-  let foundProduct: OriginalProduct | undefined = undefined
+  let foundProduct: SimpleProduct | undefined = undefined
 
   for (const item of products) {
     if (item.type === ProductTypes.CONFIGURABLE) {
       foundVariant = item.variants?.find(variant => variant.product.id === productId)
 
       if (foundVariant) {
-        foundProduct = item
+        foundVariant.type = ProductTypes.CONFIGURABLE
         break
       }
-    } else {
+    } else if (item.type === ProductTypes.SIMPLE) {
       if (item.id === productId) {
         foundProduct = item
         break
@@ -430,11 +497,9 @@ export const findProduct = async (event: H3Event<EventHandlerRequest>) => {
 }
 
 export const changeCounterProductInCart = async (event: H3Event<EventHandlerRequest>) => {
-  const body = await readMultipartFormData(event)
-  const idField = body?.find(f => f.name === 'id')
-  const counterField = body?.find(f => f.name === 'counter')
-  const productCounter = counterField ? Number(counterField.data) : undefined
-  const productId = idField ? Number(idField.data) : undefined
+  const productCounter = await getKey(event, 'counter')
+  const productId = await getKey(event, 'id')
+
   const product = cartProducts.find(item => item.id === productId)
 
   if (product && productCounter) {

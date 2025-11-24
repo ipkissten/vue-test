@@ -1,16 +1,21 @@
 <script setup lang="ts">
-import type { Product } from '~/types/catalog'
+import type { PropsProductInCart } from '~/types/cart'
+import { ProductTypes } from '~/types'
 
-const props = defineProps<Product>()
+const props = defineProps<PropsProductInCart>()
 </script>
 
 <template>
-  <CardsBase v-bind="props">
+  <CardsBase
+    v-bind="props"
+    inCart
+  >
     <template #default="{
       returnCurrencySymbol,
       formatNumberLang,
-      cartStore,
       counter,
+      onCounterUpdate,
+      cartStore,
       setCounter
     }">
       <NuxtImg
@@ -22,9 +27,19 @@ const props = defineProps<Product>()
         format="webp"
         quality="80"
       />
-      <h2 class="product-card__name">
-        {{ brand }} / {{ title }}
-      </h2>
+      <div class="product-card__info-wrap">
+        <h2 class="product-card__name">
+          {{ brand.name }} / {{ title }}
+        </h2>
+        <span
+          v-if="props.type === ProductTypes.CONFIGURABLE"
+          v-for="option in props.options"
+          :key="option.value_index"
+          class="product-card__option"
+        >
+          {{ option.code }}: {{ option.label }}
+        </span>
+      </div>
       <span class="product-card__price">
         {{ returnCurrencySymbol(price.currency) }}{{ formatNumberLang(price.value) }}
       </span>
@@ -32,6 +47,7 @@ const props = defineProps<Product>()
         <UiCounter
           :model-value="counter"
           @update:model-value="setCounter"
+          @update="onCounterUpdate"
           :id
         />
         <span class="product-card__price">

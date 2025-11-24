@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProductTypes } from '~/types'
+import { ProductTypes, } from '~/types'
 import type { Product, VariantMatrixItem } from '~/types/catalog'
 import { useCartStore } from '~/store/cart'
 
@@ -17,14 +17,6 @@ if (props.optionsGroups) {
     selectedOptions.value[group.code] = null
   })
 }
-
-const getCounter = computed(() => {
-  if (props.type === ProductTypes.SIMPLE) {
-    return cartStore.getProducts.value.find(product => product.id === props.id)?.counter || 0
-  } else {
-    return cartStore.getProducts.value.find(product => product.id === currentVariantDetails.value?.id)?.counter || 0
-  }
-})
 
 const img = computed(() => {
   return currentVariantDetails.value?.image || props.img
@@ -92,16 +84,38 @@ watch(selectedOptions, (newOptions) => {
 
   currentVariantDetails.value = null
 }, { deep: true })
+
+onMounted(() => {
+  if (props.type !== ProductTypes.CONFIGURABLE) return
+
+  const itemInCart = cartStore.getProducts.value
+    .find(p => props.variantMatrix?.some(v => v.id === p.id))
+
+  if (!itemInCart) return
+
+  const variant = props.variantMatrix!.find(v => v.id === itemInCart.id)
+  if (!variant) return
+
+  for (const code in variant.attributes) {
+    const val = variant.attributes[code] ?? null
+    selectedOptions.value[code] = val
+  }
+
+  currentVariantDetails.value = variant
+})
 </script>
 
 <template>
   <CardsBase
     v-bind="props"
+    :currentVariantDetailsId="currentVariantDetails?.id"
   >
     <template #default="{
       returnCurrencySymbol,
       formatNumberLang,
-      cartStore
+      counter,
+      onCounterUpdate,
+      setCounter
     }">
       <NuxtImg
         class="product-card__img"
@@ -116,7 +130,7 @@ watch(selectedOptions, (newOptions) => {
         {{ title }}
       </h2>
       <span class="product-card__brand">
-        {{ brand }}
+        {{ brand.name }}
       </span>
       <span class="product-card__price">
         {{ returnCurrencySymbol(price.currency) }}{{ formatNumberLang(price.value) }}
@@ -145,7 +159,9 @@ watch(selectedOptions, (newOptions) => {
       </div>
       <UiCounter
         v-if="counter"
-        v-model="counter"
+        :model-value="counter"
+        @update:model-value="setCounter"
+        @update="onCounterUpdate"
         :id
         classMod="counter--catalog"
       />

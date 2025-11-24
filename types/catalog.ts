@@ -24,6 +24,7 @@ export interface VariantProduct {
 export interface Variant {
   attributes: VariantAttribute[]
   product: VariantProduct
+  type?: ProductTypes.CONFIGURABLE
 }
 
 export interface AttributeValue {
@@ -56,6 +57,16 @@ export interface OriginalProduct {
   image: string
 }
 
+export interface SimpleProduct extends Omit<OriginalProduct, 'configurable_options' | 'variants'> {
+  type: ProductTypes.SIMPLE
+}
+
+export interface ConfigurableProduct extends OriginalProduct {
+  type: ProductTypes.CONFIGURABLE
+  configurable_options: ConfigurableOption[]
+  variants: Variant[]
+}
+
 export interface OptionValue {
   name: string
   value: string | number
@@ -80,7 +91,10 @@ export interface Product {
   id: number
   title: string
   price: Price
-  brand: string
+  brand: {
+    id: number
+    name: string
+  }
   type: ProductTypes
   img: string
   optionsGroups?: OptionGroup[]
@@ -89,6 +103,11 @@ export interface Product {
 
 export interface PropsProduct extends Product {
   counter: number
+}
+
+export interface PropsBaseProduct extends Product {
+  currentVariantDetailsId?: number
+  inCart?: boolean
 }
 
 export interface DataProducts {

@@ -37,12 +37,7 @@ watch(cartStore.getCounter, () => refresh())
         <CardsCart
           v-for="item in products"
           :key="item.id"
-          :title="item.title"
-          :brand="item.brand.name"
-          :price="item.regular_price"
-          :img="item.image"
-          :id="item.id"
-          :counter="item.counter"
+          v-bind="item"
         />
       </div>
       <div class="cart__total">
