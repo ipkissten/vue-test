@@ -1,48 +1,46 @@
 <script setup lang="ts">
-import type { ProductProps } from '~/types/components/product'
+import type { PropsBaseProduct } from '~/types/catalog'
+import { ProductTypes } from '~/types'
 import { returnCurrencySymbol, formatNumberLang } from '~/utils/helpers'
 import { useCartStore } from '~/store/cart'
 
 const cartStore = useCartStore()
+const props = defineProps<PropsBaseProduct>()
 
-const props = defineProps<ProductProps>()
-const counter = ref(props.counter)
-const DEBOUNCE_DELAY = 500
+const getCounter = computed(() => {
+  if (props.type === ProductTypes.SIMPLE || props.inCart) {
+    return cartStore.getProducts.find(product => product.id === props.id)?.counter || 0
+  } else {
+    return cartStore.getProducts.find(product => product.id === props.currentVariantDetailsId)?.counter || 0
+  }
+})
+
+const counter = ref(getCounter.value)
+const DEBOUNCE_DELAY = 200
 let timeoutId: ReturnType<typeof setTimeout> | null = null
-let skip = false
 
 const setCounter = (val: number) => {
   counter.value = val
 }
 
-watch(counter, async (newValue, prevValue) => {
-  if (newValue === 1 && prevValue === 0 || newValue === prevValue) {
-    return
-  }
-
-  if (skip) {
-    skip = false
-    return
-  }
-
+const onCounterUpdate = async () => {
   if (timeoutId) {
     clearTimeout(timeoutId)
   }
 
   timeoutId = setTimeout(async () => {
     const success = await cartStore.updateProductCounter(
-      props.id,
-      newValue
+      props.currentVariantDetailsId || props.id,
+      counter.value
     )
 
     if (!success) {
-      skip = true
-      setCounter(props.counter)
+      setCounter(getCounter.value)
     }
   }, DEBOUNCE_DELAY)
-})
+}
 
-watch(() => props.counter, (newValue) => {
+watch(getCounter, (newValue) => {
   setCounter(newValue)
 })
 </script>
@@ -52,8 +50,9 @@ watch(() => props.counter, (newValue) => {
     <slot
       :returnCurrencySymbol="returnCurrencySymbol"
       :formatNumberLang="formatNumberLang"
-      :cartStore="cartStore"
       :counter="counter"
+      :onCounterUpdate="onCounterUpdate"
+      :cartStore="cartStore"
       :setCounter="setCounter"
     />
   </div>

@@ -5,6 +5,7 @@ interface Props {
 }
 
 defineProps<Props>()
+const emit = defineEmits(['update'])
 const value = defineModel<number>({
   type: Number,
   default: 0
@@ -12,10 +13,12 @@ const value = defineModel<number>({
 
 const increment = () => {
   value.value++
+  emit('update')
 }
 
 const decrement = () => {
   value.value--
+  emit('update')
 }
 </script>
 

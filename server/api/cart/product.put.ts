@@ -1,5 +1,5 @@
 import type { Response, DataCart } from '~/types'
-import { changeCounterProductInCart } from '~/server/utils/store'
+import { changeCounterProductInCart, calculateTotalCounter, cartProducts } from '~/server/utils/store'
 
 export default defineEventHandler(async (event) => {
   await changeCounterProductInCart(event)

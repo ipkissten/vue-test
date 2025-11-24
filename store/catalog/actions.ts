@@ -4,10 +4,10 @@ export default function (state: KeysToRef<DataProducts>) {
   const { $fetchData } = useNuxtApp()
 
   const fetchProducts = async (brands?: number[]) => {
-    let stringBrands = brands && brands.length ? '?': ''
+    let stringBrands = ''
 
-    brands?.forEach((brand) => {
-      stringBrands += `&b=${brand}`
+    brands?.forEach((brand, index) => {
+      stringBrands += !index ? `?b=${brand}` : `&b=${brand}`
     })
 
     const response = await $fetchData<DataProducts>(`/api/catalog/products${stringBrands}`, { method: 'GET' })

@@ -11,7 +11,10 @@ export default defineNuxtConfig({
         lang: 'ru'
       },
       link: [
-
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/manrope/Manrope-Bold.woff2', crossorigin: '' },
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/manrope/Manrope-Regular.woff2', crossorigin: '' },
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/manrope/Manrope-SemiBold.woff2', crossorigin: '' },
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/manrope/Manrope-Medium.woff2', crossorigin: '' },
       ],
       meta: [
         { charset: 'utf-8' },

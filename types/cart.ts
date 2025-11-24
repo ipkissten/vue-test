@@ -1,8 +1,9 @@
-import type { Product } from '~/types'
+import type { ProductTypes, Price } from '~/types'
 
 export interface CartProduct {
   id: number
   counter: number
+  type: ProductTypes
 }
 
 export interface DataCart {
@@ -10,7 +11,36 @@ export interface DataCart {
   counter: number
 }
 
-export interface ProductWithCounter extends Product {
+export interface ProductInCartResponseBase {
+  counter: number
+  price: Price
+  img: string
+  brand: {
+    name: string
+    id: number
+  }
+  title: string
+  id: number
+}
+
+export interface SimpleProductInCartResponse extends ProductInCartResponseBase {
+  type: ProductTypes.SIMPLE
+}
+
+export interface ConfigurableProductInCartResponse extends ProductInCartResponseBase {
+  type: ProductTypes.CONFIGURABLE
+  options: Array<{
+    code: string
+    value_index: number
+    label: string
+  }>
+}
+
+export type ProductInCartResponse =
+  | (SimpleProductInCartResponse & { options?: undefined })
+  | ConfigurableProductInCartResponse
+
+export type PropsProductInCart = ProductInCartResponse & {
   counter: number
 }
 
@@ -19,6 +49,6 @@ export interface Total {
 }
 
 export interface TotalDataCart extends Total {
-  products: ProductWithCounter[]
+  products: ProductInCartResponse[]
   counter: number
 }

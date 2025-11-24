@@ -1,12 +1,8 @@
 import type { Response, DataCart } from '~/types'
-import { cartProducts, setCartProducts, findProduct } from '~/server/utils/store'
+import { cartProducts, calculateTotalCounter, removeProduct } from '~/server/utils/store'
 
 export default defineEventHandler(async (event) => {
-  const product = await findProduct(event)
-
-  if (product) {
-    setCartProducts(cartProducts.filter(item => item.id !== product.id))
-  }
+  await removeProduct(event)
 
   const response: Response<DataCart> = {
     data: {

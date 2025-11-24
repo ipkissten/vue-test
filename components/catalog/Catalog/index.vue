@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useCatalogStore } from '~/store/catalog'
-import { useCartStore } from '~/store/cart'
 
 const catalogStore = useCatalogStore()
-const cartStore = useCartStore()
 const selectedFilters = ref<number[]>([])
 
 const [
@@ -38,9 +36,6 @@ watch(selectedFilters, () => {
   deep: true
 })
 
-const getCounter = (id: number) => {
-  return cartStore.getProducts.value.find(product => product.id === id)?.counter || 0
-}
 </script>
 
 <template>
@@ -64,18 +59,13 @@ const getCounter = (id: number) => {
       Show filters
     </UiButton>
     <div
-      v-if="catalogStore.getProducts.value && catalogStore.getProducts.value.length"
+      v-if="catalogStore.getProducts && catalogStore.getProducts.length"
       class="catalog__grid"
     >
       <CardsCatalog
-        v-for="item in catalogStore.getProducts.value"
+        v-for="item in catalogStore.getProducts"
+        v-bind="item"
         :key="item.id"
-        :title="item.title"
-        :brand="item.brand.name"
-        :price="item.regular_price"
-        :img="item.image"
-        :id="item.id"
-        :counter="getCounter(item.id)"
       />
     </div>
   </section>
